@@ -3,3 +3,4 @@ proenv
 *.pkl
 *.csv
 .venv
+.env

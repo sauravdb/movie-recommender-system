@@ -2,11 +2,18 @@ import streamlit as st
 import pickle
 import pandas as pd
 import requests
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
+LANG = os.getenv("LANG")
+INPUT_PATH_MOVIES_DICT = os.getenv("INPUT_PATH_MOVIES_DICT")
+INPUT_PATH_SIMILARITY = os.getenv("INPUT_PATH_SIMILARITY")
 
 def fetch_poster(movie_id):
-    response = requests.get('https://api.themoviedb.org/3/movie/{}?api_key=50fb2cd92451652dcf2197067129d8bc&language=en-US'.format(movie_id))
+    response = requests.get('https://api.themoviedb.org/3/movie/{}?api_key={}&language={}'.format(movie_id,TMDB_API_KEY,LANG))
     data = response.json()
     return "https://image.tmdb.org/t/p/w500" + data['poster_path']
 
@@ -25,12 +32,12 @@ def recommend(movie):
         recommend_movies_poster.append(fetch_poster(movie_id))
     return recommend_movies,recommend_movies_poster
 
-movies_dict = pickle.load(open('movies_dict.pkl','rb'))
+movies_dict = pickle.load(open(INPUT_PATH_MOVIES_DICT,'rb'))
 movies = pd.DataFrame(movies_dict)
 
 st.title('Movie Recommender System')
 
-similarity = pickle.load(open('similarity.pkl','rb'))
+similarity = pickle.load(open(INPUT_PATH_SIMILARITY,'rb'))
 
 
 selected_movie_name = st.selectbox(
